@@ -13,4 +13,4 @@ routes
   .get("/borrowers/:id", service.findBorrowerByCardNo)
   .get("/borrowers", service.findAllBorrowers);
 
-module.exports = routes;
+module.exports = routes; 

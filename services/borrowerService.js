@@ -4,42 +4,37 @@ const bookLoansDao = require("../dao/bookLoansDao");
 const branchDao = require("../dao/branchDao");
 const copiesDao = require("../dao/copiesDao");
 
-
-exports.returnBook = async function (req, res) {
+exports.returnBook = async function (req) {
   try {
+    console.log("Returning book.");
     await db.beginTransaction();
-    await bookLoansDao.returnBook(req.params.id, req.body);
+    await bookLoansDao.returnBook(req.body);
     await copiesDao.addCopy(req.body);
     await db.commit();
-    res.status(200);
-    res.send("Book returned.");
   } catch (e) {
     console.log(e);
     await db.rollback();
-    res.status(400);
-    res.send("Opperation failed.");
-  } 
-}
+    throw e;
+  }
+};
 
-exports.borrowBook = async function (req, res) {
+exports.borrowBook = async function (req) {
   try {
+    console.log("Borrowing book.")
     await db.beginTransaction();
-    await bookLoansDao.borrowBook(req.params.id, req.body);
+    await bookLoansDao.borrowBook(req.body, req.params.cardNo);
     await copiesDao.removeCopy(req.body);
     await db.commit();
-    res.status(201);
-    res.send("Book borrowed.");
   } catch (e) {
     console.log(e);
     await db.rollback();
-    res.status(400);
-    res.send("Opperation failed.");
-  } 
-}
+    throw e;
+  }
+};
 
 exports.findCopiesByBranch = async function (req, res) {
   try {
-    let result = await copiesDao.findCopiesByBranch(req.params.id);
+    let result = await copiesDao.findCopiesByBranch(req.params.branchId);
     res.setHeader("Content-Type", "application/json");
     res.status(200);
     res.send(result);
@@ -47,12 +42,12 @@ exports.findCopiesByBranch = async function (req, res) {
     console.log(e);
     res.status(404);
     res.send();
-  } 
+  }
 };
 
 exports.findBranchById = async function (req, res) {
   try {
-    let result = await branchDao.find(req.params.bid);
+    let result = await branchDao.find(req.params.branchId);
     res.setHeader("Content-Type", "application/json");
     res.status(200);
     res.send(result);
@@ -73,12 +68,12 @@ exports.findAllBranches = async function (req, res) {
     console.log(e);
     res.status(404);
     res.send();
-   }
+  }
 };
 
 exports.findActiveLoans = async function (req, res) {
   try {
-    let result = await bookLoansDao.findActiveByCardNo(req.params.id);
+    let result = await bookLoansDao.findActiveByCardNo(req.params.cardNo);
     res.setHeader("Content-Type", "application/json");
     res.status(200);
     res.send(result);
@@ -91,7 +86,7 @@ exports.findActiveLoans = async function (req, res) {
 
 exports.findBorrowerByCardNo = async function (req, res) {
   try {
-    let result = await borrowerDao.findById(req.params.id);
+    let result = await borrowerDao.findById(req.params.cardNo);
     res.setHeader("Content-Type", "application/json");
     res.status(200);
     res.send(result);

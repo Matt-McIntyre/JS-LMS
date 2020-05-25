@@ -1,19 +1,19 @@
 const db = require("./db").getDb();
 
-exports.findActiveByCardNo = async (cn) =>
+exports.findActiveByCardNo = async (cardNo) =>
   await db.query(
     "select * from tbl_book_loans where cardNo = ? and dateIn is null",
-    [cn]
+    [cardNo]
   );
 
-exports.borrowBook = async (cardNo, copies) =>
+exports.borrowBook = async (copies, cardNo) =>
   await db.query(
-    "insert into tbl_book_loans values (?,?,?,now(),date_add(now(), interval 7 DAY),null)",
+    "insert into tbl_book_loans (bookId, branchId, cardNo, dateOut, dueDate, dateIn) values (?,?,?,now(),date_add(now(), interval 7 DAY),null)",
     [copies.bookId, copies.branchId, cardNo]
   );
 
-exports.returnBook = async (cardNo, loan) => 
+exports.returnBook = async (loan) => 
   await db.query(
-    "update tbl_book_loans set dateIn = now() where bookId = ? and branchId = ? and cardNo = ? ",
-    [loan.bookId, loan.branchId, cardNo]
+    "update tbl_book_loans set dateIn = now() where loanId = ?",
+    [loan.loanId]
   );

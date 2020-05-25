@@ -10,6 +10,7 @@ exports.getDb = () => {
   return {
     query(sql, args) {
       return new Promise((resolve, reject) => {
+        console.log(`sending query:\n${sql}`);
         conn.query(sql, args, (error, result) =>
           error ? reject(error) : resolve(result)
         );
@@ -17,19 +18,26 @@ exports.getDb = () => {
     },
     beginTransaction() {
       return new Promise((resolve, reject) => {
+        console.log("beggining transaction.");
         conn.beginTransaction((error) =>
-          error ? reject(error) : resolve(null)
+          error ? reject(error) : resolve("transaction begun.")
         );
       });
     },
     rollback() {
       return new Promise((resolve, reject) => {
-        conn.rollback((error) => (error ? reject(error) : resolve(null)));
+        console.log("rolling back.");
+        conn.rollback((error) =>
+          error ? reject(error) : resolve("rollback successful.")
+        );
       });
     },
     commit() {
       return new Promise((resolve, reject) => {
-        conn.commit((error) => (error ? reject(error) : resolve(null)));
+        console.log("commiting.");
+        conn.commit((error) =>
+          error ? reject(error) : resolve("commit successful.")
+        );
       });
     },
   };

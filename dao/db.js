@@ -18,7 +18,7 @@ exports.getDb = () => {
     },
     beginTransaction() {
       return new Promise((resolve, reject) => {
-        console.log("beggining transaction.");
+        console.log("beginning transaction.");
         conn.beginTransaction((error) =>
           error ? reject(error) : resolve("transaction begun.")
         );
@@ -34,7 +34,7 @@ exports.getDb = () => {
     },
     commit() {
       return new Promise((resolve, reject) => {
-        console.log("commiting.");
+        console.log("committing.");
         conn.commit((error) =>
           error ? reject(error) : resolve("commit successful.")
         );

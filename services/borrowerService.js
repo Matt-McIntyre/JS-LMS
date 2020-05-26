@@ -4,20 +4,18 @@ const bookLoansDao = require("../dao/bookLoansDao");
 const branchDao = require("../dao/branchDao");
 const copiesDao = require("../dao/copiesDao");
 
-exports.returnBook = async function (req) {
+// (1) List all books availible to borrow for the given branch
+exports.findCopiesByBranch = async function (req) {
   try {
-    console.log("Returning book.");
-    await db.beginTransaction();
-    await bookLoansDao.returnBook(req.body);
-    await copiesDao.addCopy(req.body);
-    await db.commit();
+    let result = await copiesDao.findCopiesByBranch(req.params.branchId);
+    return result;
   } catch (e) {
     console.log(e);
-    await db.rollback();
     throw e;
   }
 };
 
+// (2) Borrow the book given in the POST request body
 exports.borrowBook = async function (req) {
   try {
     console.log("Borrowing book.")
@@ -32,80 +30,72 @@ exports.borrowBook = async function (req) {
   }
 };
 
-exports.findCopiesByBranch = async function (req, res) {
-  try {
-    let result = await copiesDao.findCopiesByBranch(req.params.branchId);
-    res.setHeader("Content-Type", "application/json");
-    res.status(200);
-    res.send(result);
-  } catch (e) {
-    console.log(e);
-    res.status(404);
-    res.send();
-  }
-};
-
-exports.findBranchById = async function (req, res) {
+// (3) List specific Library Branch by branchId
+exports.findBranchById = async function (req) {
   try {
     let result = await branchDao.find(req.params.branchId);
-    res.setHeader("Content-Type", "application/json");
-    res.status(200);
-    res.send(result);
+    return result;
   } catch (e) {
     console.log(e);
-    res.status(404);
-    res.send();
+    throw e;
   }
 };
 
-exports.findAllBranches = async function (req, res) {
+// (4) List of all Library Branches
+exports.findAllBranches = async function () {
   try {
     let result = await branchDao.findAll();
-    res.setHeader("Content-Type", "application/json");
-    res.status(200);
-    res.send(result);
+    return result;
   } catch (e) {
     console.log(e);
-    res.status(404);
-    res.send();
+    throw e
   }
 };
 
-exports.findActiveLoans = async function (req, res) {
+// (5) List of all active loans for given borrower
+exports.findActiveLoans = async function (req) {
   try {
     let result = await bookLoansDao.findActiveByCardNo(req.params.cardNo);
-    res.setHeader("Content-Type", "application/json");
-    res.status(200);
-    res.send(result);
+    return result;
   } catch (e) {
     console.log(e);
-    res.status(404);
-    res.send();
+    throw e;
   }
 };
 
+// (6) return a book loan given in the PUT request body
+exports.returnBook = async function (req) {
+  try {
+    console.log("Returning book.");
+    await db.beginTransaction();
+    await bookLoansDao.returnBook(req.body);
+    await copiesDao.addCopy(req.body);
+    await db.commit();
+  } catch (e) {
+    console.log(e);
+    await db.rollback();
+    throw e;
+  }
+};
+
+// (7) return borrower details
 exports.findBorrowerByCardNo = async function (req, res) {
   try {
     let result = await borrowerDao.findById(req.params.cardNo);
-    res.setHeader("Content-Type", "application/json");
-    res.status(200);
-    res.send(result);
+    return result;
   } catch (e) {
     console.log(e);
-    res.status(404);
-    res.send();
+    throw e;
   }
 };
 
+// (8) return list of all borrowers 
 exports.findAllBorrowers = async function (req, res) {
   try {
     let result = await borrowerDao.findAll();
-    res.setHeader("Content-Type", "application/json");
-    res.status(200);
-    res.send(result);
+    return result;
   } catch (e) {
     console.log(e);
-    res.status(404);
-    res.send();
+    throw e;
   }
 };

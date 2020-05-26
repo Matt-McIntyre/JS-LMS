@@ -10,7 +10,7 @@ exports.getDb = () => {
   return {
     query(sql, args) {
       return new Promise((resolve, reject) => {
-        console.log(`sending query:\n${sql}`);
+        console.log(`sending query:\n${sql}\n${args}`);
         conn.query(sql, args, (error, result) =>
           error ? reject(error) : resolve(result)
         );

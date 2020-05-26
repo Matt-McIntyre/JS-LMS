@@ -81,7 +81,7 @@ exports.returnBook = async function (req) {
 // (7) return borrower details
 exports.findBorrowerByCardNo = async function (req, res) {
   try {
-    let result = await borrowerDao.findById(req.params.cardNo);
+    let result = await borrowerDao.find(req.params.cardNo);
     return result;
   } catch (e) {
     console.log(e);

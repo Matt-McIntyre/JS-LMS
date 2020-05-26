@@ -8,7 +8,7 @@ exports.findActiveByCardNo = async (cardNo) =>
 
 exports.borrowBook = async (copies, cardNo) =>
   await db.query(
-    "insert into tbl_book_loans (branchId, cardNo, dateOut, dueDate, dateIn) values (?,?,?,now(),date_add(now(), interval 7 DAY),null)",
+    "insert into tbl_book_loans (bookId, branchId, cardNo, dateOut, dueDate, dateIn) values (?,?,?,now(),date_add(now(), interval 7 DAY),null)",
     [copies.bookId, copies.branchId, cardNo]
   );
 
